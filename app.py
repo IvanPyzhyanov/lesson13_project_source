@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, send_from_directory, json
 import os
 from pathlib import Path
-from functions import read_json, take_tags, looking_tag
+from functions import read_json, take_tags, looking_tag, add_post
 
 POST_PATH = "posts.json"
 UPLOAD_FOLDER = "uploads/images"
@@ -18,13 +18,22 @@ def page_index():
 def page_tag():
     tag = request.args.get("tag")
     if tag:
-        return render_template("post_by_tag.html", posts=looking_tag(tag))
+        return render_template("post_by_tag.html", posts=looking_tag(tag), tag=tag)
 
 
 
 @app.route("/post", methods=["GET", "POST"])
 def page_post_create():
-    pass
+    if request.method == "POST":
+        text = request.form.get("content")
+        pic = request.files.get("picture")
+        if text or pic:
+            path = f"{UPLOAD_FOLDER}/{pic.filename}"
+            pic.save(path)
+            post = {"pic": f"/{path}", "content": text}
+            add_post(post)
+            return render_template("post_uploaded.html", post=post)
+    return render_template("post_form.html")
 
 
 
