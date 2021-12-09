@@ -14,3 +14,10 @@ def take_tags():
                 if i[0]=="#":
                     tags_list.append(i[1:])
     return tags_list
+
+
+#looking for the post which contain selected tag
+def looking_tag(tag):
+    posts_by_tag = [x for x in read_json() if tag in x["content"]]
+    return posts_by_tag
+

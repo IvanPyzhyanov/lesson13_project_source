@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, send_from_directory, json
 import os
 from pathlib import Path
-from functions import read_json, take_tags
+from functions import read_json, take_tags, looking_tag
 
 POST_PATH = "posts.json"
 UPLOAD_FOLDER = "uploads/images"
@@ -14,15 +14,18 @@ def page_index():
     return render_template("index.html", tags=take_tags())
 
 
-
 @app.route("/tag")
 def page_tag():
-    pass
+    tag = request.args.get("tag")
+    if tag:
+        return render_template("post_by_tag.html", posts=looking_tag(tag))
+
 
 
 @app.route("/post", methods=["GET", "POST"])
 def page_post_create():
     pass
+
 
 
 @app.route("/uploads/<path:path>")
@@ -32,5 +35,5 @@ def static_dir(path):
 
 if __name__ == "__main__":
     os.chdir(Path(os.path.abspath(__file__)).parent)
-    app.run()
+    app.run(debug=True)
 
