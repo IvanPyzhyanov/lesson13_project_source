@@ -11,14 +11,16 @@ app = Flask(__name__)
 
 @app.route("/")
 def page_index():
-    return render_template("index.html", tags=take_tags())
+    return render_template("index.html", tags=take_tags(read_json(POST_PATH)))
 
 
 @app.route("/tag")
 def page_tag():
     tag = request.args.get("tag")
     if tag:
-        return render_template("post_by_tag.html", posts=looking_tag(tag), tag=tag)
+        return render_template("post_by_tag.html", posts=looking_tag(tag, POST_PATH), tag=tag)
+    else:
+        return "", 400
 
 
 
@@ -33,6 +35,8 @@ def page_post_create():
             post = {"pic": f"/{path}", "content": text}
             add_post(post)
             return render_template("post_uploaded.html", post=post)
+        else:
+            return "", 400
     return render_template("post_form.html")
 
 
